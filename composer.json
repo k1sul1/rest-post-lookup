@@ -1,0 +1,14 @@
+{
+    "name": "k1sul1/expose-more-pagedata-in-rest",
+    "description": "Expose more data in the WordPress REST API pages endpoint",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Christian Nikkanen",
+            "email": "hi@kisu.li"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
