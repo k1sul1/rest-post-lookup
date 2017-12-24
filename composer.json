@@ -1,6 +1,6 @@
 {
-    "name": "k1sul1/expose-more-pagedata-in-rest",
-    "description": "Expose more data in the WordPress REST API pages endpoint",
+    "name": "k1sul1/rest-post-lookup",
+    "description": "Endpoint that let's you query with an url and get a post object in return.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0",
     "authors": [
