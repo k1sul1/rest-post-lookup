@@ -68,11 +68,12 @@ add_action("plugins_loaded", function() {
         if (true) {
           $query = \k1sul1\db()->prepare("SELECT object_id FROM wp_rpl_permalinks WHERE permalink = ? LIMIT 1");
           $query->execute([$url]);
+          $id = $query->fetchColumn(0);
 
-          if ($query->rowCount() > 0) {
+          if ($id !== false) {
             return new \WP_REST_Response([
               // "id" => $query->fetch()["object_id"]
-              "post" => get_post($query->fetch()["object_id"]),
+              "post" => get_post($id),
             ]);
           } else {
             $response =  new \WP_REST_Response([
