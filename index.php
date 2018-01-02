@@ -32,8 +32,10 @@ add_action("plugins_loaded", function() {
 
   add_filter("generate_rewrite_rules", function($wp_rewrite) {
     $db = \k1sul1\db();
-    $query = $db->prepare("SELECT ID from wp_posts WHERE post_status NOT IN (?, ?) AND post_type NOT IN (?, ?, ?)");
-    $query->execute(["trash", "auto-draft", "revision", "customize_changeset", "nav_menu_item"]);
+    $query = $db->prepare("SELECT ID from wp_posts WHERE post_status NOT IN (?, ?) AND post_type NOT IN (?, ?, ?, ?, ?)");
+
+    $params = ["trash", "auto-draft", "revision", "customize_changeset", "nav_menu_item", "acf-field", "acf-field-group"];
+    $query->execute($params);
 
     $db->exec("CREATE TABLE IF NOT EXISTS wp_rpl_permalinks_temp LIKE wp_rpl_permalinks");
     $db->exec("TRUNCATE TABLE wp_rpl_permalinks_temp");
@@ -56,6 +58,16 @@ add_action("plugins_loaded", function() {
 
     // Leave the rules unharmed. We're doing nothing with them.
     return $wp_rewrite->rules;
+  });
+
+  add_action("save_post", function($post_id) {
+    if (!wp_is_post_revision($post_id)) {
+      $db = \k1sul1\db();
+      $permalink = get_permalink($post_id);
+      $insert = $db->prepare("INSERT INTO wp_rpl_permalinks (object_id, permalink) VALUES(?, ?) ON DUPLICATE KEY UPDATE permalink = ?");
+
+      $insert->execute([$post_id, $permalink, $permalink]);
+    }
   });
 
   add_action("rest_api_init", function() {
