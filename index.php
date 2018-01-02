@@ -71,6 +71,17 @@ add_action("plugins_loaded", function() {
           $id = $query->fetchColumn(0);
 
           if ($id !== false) {
+            $post = get_post($id);
+            $type = $post->post_type;
+            $ptypeObject = get_post_type_object($type);
+            $endpoint = !empty($ptypeObject->rest_base) ? $ptypeObject->rest_base : $type;
+
+            setup_postdata($post); // The response may be faster with this.
+
+            $req = new \WP_REST_Request("GET", "/wp/v2/{$endpoint}/$id");
+
+            return rest_do_request($req);
+
             return new \WP_REST_Response([
               // "id" => $query->fetch()["object_id"]
               "post" => get_post($id),
