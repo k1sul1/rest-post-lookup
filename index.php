@@ -7,7 +7,7 @@ Author URI: http://kisu.li
 
 namespace k1sul1;
 
-require_once "vendor/autoload.php";
+// require_once "vendor/autoload.php";
 require_once "class.db.php";
 
 \k1sul1\db(); // Open the connection
