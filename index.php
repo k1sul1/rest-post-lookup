@@ -84,7 +84,10 @@ add_action("plugins_loaded", function() {
     register_rest_route("rpl/v1", "lookup", [
       "methods" => "GET",
       "callback" => function() {
-        $url = $_GET["url"];
+        $url = sanitize_text_field($_GET["url"]);
+        $url = str_replace([
+          "&preview=true",
+        ], "", $url);
         $legacy = false;
 
         $getResponse = function($id) {
@@ -101,13 +104,12 @@ add_action("plugins_loaded", function() {
           // can't get an answer: https://twitter.com/k1sul1/status/945950740106838016
           // set_query_params should work according to this https://developer.wordpress.org/reference/classes/wp_rest_request/
 
-
           // $req->set_param("_embed", 1);
           // $req["_embed"] = true;
           // $req->set_query_params([
             // "_embed" => true,
             // "embed" => true,
-            // "embedded" => true,
+            /// "embedded" => true,
             // "_embedded" => true,
           // ]);
 
@@ -120,12 +122,6 @@ add_action("plugins_loaded", function() {
           $query->execute([$url]);
           $id = $query->fetchColumn(0);
 
-          error_log(print_r($_REQUEST, true));
-          error_log(print_r($_COOKIE, true));
-          // error_log(wp_get_current_user());;
-
-          error_log("check for authentication before giving a post that is private!");
-
           if ($id !== false) {
             return $getResponse($id);
           } else {
@@ -136,6 +132,7 @@ add_action("plugins_loaded", function() {
             return $response;
           }
         } else {
+          // The native implementation.
           $id = url_to_postid($url);
 
           if ($id === 0) {
