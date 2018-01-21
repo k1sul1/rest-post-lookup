@@ -71,20 +71,13 @@ add_action("plugins_loaded", function() {
     }
   });
 
-  // add_action("admin_bar_menu", function($bar) {
-    // $bar->add_node([
-      // "id" => "rpl_regen_permalinks",
-      // "title" => "Regenerate permalinks",
-      // "href" => "/"
-    // ]);
-  // });
-
   add_action("rest_api_init", function() {
 
     register_rest_route("rpl/v1", "lookup", [
       "methods" => "GET",
       "callback" => function() {
         $url = sanitize_text_field($_GET["url"]);
+        $url = strpos($url, "?") === false ? trailingslashit($url) : $url;
         $url = str_replace([
           "&preview=true",
         ], "", $url);
